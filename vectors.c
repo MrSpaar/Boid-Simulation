@@ -1,16 +1,16 @@
 #include "vectors.h"
 
-void add(vec2D *vec1, vec2D *vec2) {
+void add_vec(vec2D *vec1, vec2D *vec2) {
     vec1->x += vec2->x;
     vec1->y += vec2->y;
 }
 
-vec2D sub(vec2D *vec1, vec2D *vec2) {
+vec2D sub_vec(vec2D *vec1, vec2D *vec2) {
     vec2D result = {vec1->x - vec2->x, vec1->y - vec2->y};
     return result;
 }
 
-void mul(vec2D *vec, double scalar) {
+void mul_vec(vec2D *vec, double scalar) {
     vec->x *= scalar;
     vec->y *= scalar;
 }
