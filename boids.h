@@ -15,6 +15,6 @@ typedef struct {
 } boid_list;
 
 boid_list create_boid_list(int count);
-boid_list get_neighbours(boid_list *boids, boid *boid1, double radius);
+void update_boid(boid *boid1, boid_list *boids);
 
 #endif
