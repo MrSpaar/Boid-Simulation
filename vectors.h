@@ -13,5 +13,6 @@ vec2D sub_vec(vec2D *vec1, vec2D *vec2);
 void mul_vec(vec2D *vec, double scalar);
 void div_vec(vec2D *vec, double scalar);
 double dist(vec2D *vec1, vec2D *vec2);
+double norm(vec2D *vec);
 
 #endif
