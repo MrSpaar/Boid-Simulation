@@ -15,7 +15,7 @@ void mul_vec(vec2D *vec, double scalar) {
     vec->y *= scalar;
 }
 
-void div(vec2D *vec, double scalar) {
+void div_vec(vec2D *vec, double scalar) {
     vec->x /= scalar;
     vec->y /= scalar;
 }
