@@ -5,5 +5,10 @@ set(CMAKE_C_STANDARD 23)
 find_package(SDL2 REQUIRED)
 include_directories(SDL2 ${SDL2_INCLUDE_DIRS})
 
-add_executable(boids main.c csdl.c boids.c vectors.c)
+file(GLOB src_files CONFIGURE_DEPENDS
+        "src/*.c"
+        "src/*.h"
+)
+
+add_executable(${PROJECT_NAME} ${src_files})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} -lm)

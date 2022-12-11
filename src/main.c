@@ -22,6 +22,6 @@ int main() {
         }
 
         SDL_RenderPresent(csdl.renderer);
-        SDL_Delay(4);
+        SDL_Delay(10);
     }
 }
