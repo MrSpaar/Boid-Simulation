@@ -5,7 +5,7 @@ int main() {
     CSDL csdl = CSDL_Init(1024, 720);
 
     SDL_Event event;
-    boid_list boids = create_boid_list(300);
+    boid_list boids = create_boid_list(100);
 
     while (1) {
         while(SDL_PollEvent(&event) != 0)

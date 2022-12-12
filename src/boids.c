@@ -9,6 +9,9 @@ boid_list create_boid_list(int count) {
         boids.list[i] = malloc(sizeof(boid));
         boids.list[i]->pos.x = rand() % 1024;
         boids.list[i]->pos.y = rand() % 720;
+
+        if (!(rand()%5))
+            boids.list[i]->strength = 5;
     }
 
     return boids;
@@ -31,43 +34,66 @@ boid_list get_neighbours(boid_list *boids, boid *boid1, double radius) {
 }
 
 vec2D compute_separation(boid *boid1, boid_list *neighbours) {
-    vec2D sum = {0, 0};
+    vec2D force = {0, 0};
+
+    if (neighbours->count == 0)
+        return force;
 
     for (int i = 0; i < neighbours->count; i++) {
         vec2D diff = sub_vec(&boid1->pos, &neighbours->list[i]->pos);
-        add_vec(&sum, &diff);
+        add_vec(&force, &diff);
     }
 
-    return sum;
+    return force;
 }
 
 vec2D compute_cohesion(boid *boid1, boid_list *neighbours) {
-    vec2D sum = {0, 0};
+    vec2D force = {0, 0};
+
+    if (neighbours->count == 0)
+        return force;
 
     for (int i = 0; i < neighbours->count; i++)
-        add_vec(&sum, &neighbours->list[i]->pos);
-    div_vec(&sum, neighbours->count);
+        add_vec(&force, &neighbours->list[i]->pos);
+    div_vec(&force, neighbours->count);
 
-    return sub_vec(&sum, &boid1->pos);
+    return sub_vec(&force, &boid1->pos);
 }
 
 vec2D compute_alignment(boid_list *neighbours) {
-    vec2D sum = {0, 0};
+    vec2D force = {0, 0};
+
+    if (neighbours->count == 0)
+        return force;
 
     for (int i = 0; i < neighbours->count; i++)
-        add_vec(&sum, &neighbours->list[i]->vel);
-    div_vec(&sum, neighbours->count);
+        add_vec(&force, &neighbours->list[i]->vel);
+    div_vec(&force, neighbours->count);
 
-    return sum;
+    return force;
+}
+
+vec2D compute_leadership(boid *boid1, boid_list *neighbours) {
+    if (neighbours->count == 0)
+        return (vec2D){0, 0};
+
+    boid *leader = neighbours->list[0];
+
+    for (int i = 1; i < neighbours->count; i++)
+        if (neighbours->list[i]->strength > leader->strength)
+            leader = neighbours->list[i];
+
+    vec2D force = {leader->pos.x - boid1->pos.x, leader->pos.y - boid1->pos.y};
+    mul_vec(&force, leader->strength);
+
+    return force;
 }
 
 void limit_vel(boid *boid1, double max_vel) {
     double vel = norm(&boid1->vel);
 
-    if (vel > max_vel) {
-        div_vec(&boid1->vel, vel);
-        mul_vec(&boid1->vel, max_vel);
-    }
+    if (vel > max_vel)
+        mul_vec(&boid1->vel, max_vel/vel);
 }
 
 void limit_pos(boid *boid1, int width, int height, int limit) {
@@ -85,14 +111,17 @@ void update_boid(boid *boid1, boid_list *boids) {
     vec2D separation = compute_separation(boid1, &close);
     vec2D cohesion = compute_cohesion(boid1, &around);
     vec2D alignment = compute_alignment(&around);
+    vec2D leadership = compute_leadership(boid1, &around);
 
     mul_vec(&separation, 0.1);
-    mul_vec(&cohesion, 0.2);
+    mul_vec(&cohesion, 0.3);
     mul_vec(&alignment, 1.5);
+    mul_vec(&leadership, 1);
 
     add_vec(&boid1->acc, &separation);
     add_vec(&boid1->acc, &cohesion);
     add_vec(&boid1->acc, &alignment);
+    add_vec(&boid1->acc, &leadership);
 
     add_vec(&boid1->vel, &boid1->acc);
 
