@@ -97,10 +97,10 @@ void limit_vel(boid *boid1, double max_vel) {
 }
 
 void limit_pos(boid *boid1, int width, int height, int limit) {
-    if ((boid1->pos.x < limit && boid1->acc.x < 0) || (boid1->pos.x > (width-limit) && boid1->acc.x > 0))
+    if (boid1->pos.x < limit && boid1->acc.x < 0 || boid1->pos.x > width-limit && boid1->acc.x > 0)
         boid1->acc.x *= -1;
 
-    if ((boid1->pos.y < limit && boid1->acc.y < 0) || (boid1->pos.y > (height-limit) && boid1->acc.y > 0))
+    if (boid1->pos.y < limit && boid1->acc.y < 0 || boid1->pos.y > height-limit && boid1->acc.y > 0)
         boid1->acc.y *= -1;
 }
 
