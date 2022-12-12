@@ -15,14 +15,14 @@ void CSDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius) {
     int offsetx=0, offsety=radius, d=radius-1;
 
     while (offsety >= offsetx) {
-        SDL_RenderDrawLine(renderer, x - offsety, y + offsetx,
-                           x + offsety, y + offsetx);
-        SDL_RenderDrawLine(renderer, x - offsetx, y + offsety,
-                           x + offsetx, y + offsety);
-        SDL_RenderDrawLine(renderer, x - offsetx, y - offsety,
-                           x + offsetx, y - offsety);
-        SDL_RenderDrawLine(renderer, x - offsety, y - offsetx,
-                           x + offsety, y - offsetx);
+        SDL_RenderDrawLine(renderer, x-offsety, y+offsetx,
+                           x+offsety, y+offsetx);
+        SDL_RenderDrawLine(renderer, x-offsetx, y+offsety,
+                           x+offsetx, y+offsety);
+        SDL_RenderDrawLine(renderer, x-offsetx, y-offsety,
+                           x+offsetx, y-offsety);
+        SDL_RenderDrawLine(renderer, x-offsety, y-offsetx,
+                           x+offsety, y-offsetx);
 
         if (d >= 2*offsetx) {
             d -= 2*offsetx + 1;
@@ -38,9 +38,9 @@ void CSDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius) {
     }
 }
 
-void CSDL_Quit(SDL_Window *window, SDL_Renderer *renderer) {
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
+void CSDL_Quit(CSDL *csdl) {
+    SDL_DestroyWindow(csdl->window);
+    SDL_DestroyRenderer(csdl->renderer);
     SDL_Quit();
 
     exit(EXIT_SUCCESS);

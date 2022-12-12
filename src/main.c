@@ -10,7 +10,7 @@ int main() {
     while (1) {
         while(SDL_PollEvent(&event) != 0)
             if(event.type == SDL_QUIT)
-                CSDL_Quit(csdl.window, csdl.renderer);
+                CSDL_Quit(&csdl);
 
         SDL_SetRenderDrawColor(csdl.renderer, 0, 0, 0, 0);
         SDL_RenderClear(csdl.renderer);

@@ -10,8 +10,8 @@ typedef struct {
 } CSDL;
 
 CSDL CSDL_Init(int width, int height);
-void CSDL_RenderFillCircle(SDL_Renderer * renderer, int x, int y, int radius);
-void CSDL_Quit(SDL_Window *window, SDL_Renderer *renderer);
+void CSDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius);
+void CSDL_Quit(CSDL *csdl);
 void CSDL_ErrorOut(char *message);
 
 #endif
