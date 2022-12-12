@@ -3,13 +3,13 @@
 This is an extended implementation of Reynolds' Boids algorithm in C using SDL.<br>
 Boid's flocking behaviour is simulated using a simple rule-based system :
 - Separation : Boids try to avoid crowding local flockmates.<br>
-<img style="display:inline" src="https://latex.codecogs.com/svg.latex?\color{White}\overrightarrow{a_{sep}} = \sum_{b \in V}\overrightarrow{p}-\overrightarrow{p_b} "/><br>
+<img src="https://latex.codecogs.com/svg.latex?\color{White}\overrightarrow{a_{sep}} = \sum_{b \in V}\overrightarrow{p}-\overrightarrow{p_b} "/><br>
 
 - Alignment : Boids try to fly the same direction as local flockmates.<br>
- <img style="display:inline" src="https://latex.codecogs.com/svg.latex?\color{White}\overrightarrow{a_{ali}} = \frac{1}{N}\sum_{b \in V}\overrightarrow{v_b} "/><br>
+ <img src="https://latex.codecogs.com/svg.latex?\color{White}\overrightarrow{a_{ali}} = \frac{1}{N}\sum_{b \in V}\overrightarrow{v_b} "/><br>
 
 - Cohesion : Boids try to stay close to local flockmates.<br>
-<img style="display:inline" src="https://latex.codecogs.com/svg.latex?\color{White}\overrightarrow{a_{coh}} = \frac{1}{N}\sum_{b \in V}\overrightarrow{p_b} "/><br>
+<img src="https://latex.codecogs.com/svg.latex?\color{White}\overrightarrow{a_{coh}} = \frac{1}{N}\sum_{b \in V}\overrightarrow{p_b} "/><br>
 
 Where :
 - V is the set of boids in the neighbourhood of a boid.
