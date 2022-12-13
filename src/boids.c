@@ -1,8 +1,9 @@
 #include "boids.h"
-#include <malloc.h>
+#include <time.h>
 #include <stdlib.h>
 
 boid_list create_boid_list(int count) {
+    srand(time(NULL));
     boid_list boids = {malloc(sizeof(boid*)*(count+1)), count};
 
     for (int i = 0; i < count; i++) {
