@@ -10,8 +10,8 @@ boid_list create_boid_list(int count) {
         boids.list[i]->pos.x = rand() % 1024;
         boids.list[i]->pos.y = rand() % 720;
 
-        if (!(rand()%5))
-            boids.list[i]->strength = 5;
+        if (!(rand()%100))
+            boids.list[i]->strength = fmin(2, rand() % 5);
     }
 
     return boids;
@@ -96,11 +96,11 @@ void limit_vel(boid *boid1, double max_vel) {
         mul_vec(&boid1->vel, max_vel/vel);
 }
 
-void limit_pos(boid *boid1, int width, int height, int limit) {
-    if (boid1->pos.x < limit && boid1->acc.x < 0 || boid1->pos.x > width-limit && boid1->acc.x > 0)
+void limit_pos(boid *boid1, int limit) {
+    if (boid1->pos.x < limit && boid1->acc.x < 0 || boid1->pos.x > WIDTH-limit && boid1->acc.x > 0)
         boid1->acc.x *= -1;
 
-    if (boid1->pos.y < limit && boid1->acc.y < 0 || boid1->pos.y > height-limit && boid1->acc.y > 0)
+    if (boid1->pos.y < limit && boid1->acc.y < 0 || boid1->pos.y > HEIGHT-limit && boid1->acc.y > 0)
         boid1->acc.y *= -1;
 }
 
@@ -113,9 +113,9 @@ void update_boid(boid *boid1, boid_list *boids) {
     vec2D alignment = compute_alignment(&around);
     vec2D leadership = compute_leadership(boid1, &around);
 
-    mul_vec(&separation, 0.1);
-    mul_vec(&cohesion, 0.3);
-    mul_vec(&alignment, 1.5);
+    mul_vec(&separation, 0.2);
+    mul_vec(&cohesion, 0.5);
+    mul_vec(&alignment, 5);
     mul_vec(&leadership, 1);
 
     add_vec(&boid1->acc, &separation);
@@ -126,7 +126,7 @@ void update_boid(boid *boid1, boid_list *boids) {
     add_vec(&boid1->vel, &boid1->acc);
 
     limit_vel(boid1, 2);
-    limit_pos(boid1, 1024, 720, 20);
+    limit_pos(boid1, 20);
 
     add_vec(&boid1->pos, &boid1->vel);
 }

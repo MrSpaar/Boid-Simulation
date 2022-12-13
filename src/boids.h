@@ -3,6 +3,9 @@
 
 #include "vectors.h"
 
+#define WIDTH 1024
+#define HEIGHT 720
+
 typedef struct {
     vec2D pos;
     vec2D vel;

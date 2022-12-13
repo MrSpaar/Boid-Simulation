@@ -44,7 +44,7 @@ Some boids are designated as leaders and other boids will follow them :<br>
 
 Where :
 - **L** is the strenght of the leader's influence.
-- **p<sub>l</sub>** is the position of the leader.
+- **p<sub>L</sub>** is the position of the leader.
 - **p** is the position of another boid.
 
 The acceleration of a boid then follows this formula :<br>

@@ -2,10 +2,10 @@
 #include "boids.h"
 
 int main() {
-    CSDL csdl = CSDL_Init(1024, 720);
-
-    SDL_Event event;
     boid_list boids = create_boid_list(100);
+
+    CSDL csdl = CSDL_Init(WIDTH, HEIGHT);
+    SDL_Event event;
 
     while (1) {
         while(SDL_PollEvent(&event) != 0)
