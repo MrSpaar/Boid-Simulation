@@ -11,31 +11,42 @@ CSDL CSDL_Init(int width, int height) {
     return csdl;
 }
 
-void CSDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius) {
-    int offsetx=0, offsety=radius, d=radius-1;
+SDL_Texture *CSDL_CreateTexture(SDL_Renderer *renderer, char *path) {
+    SDL_Surface *surface = NULL;
+    surface = SDL_LoadBMP(path);
 
-    while (offsety >= offsetx) {
-        SDL_RenderDrawLine(renderer, x-offsety, y+offsetx,
-                           x+offsety, y+offsetx);
-        SDL_RenderDrawLine(renderer, x-offsetx, y+offsety,
-                           x+offsetx, y+offsety);
-        SDL_RenderDrawLine(renderer, x-offsetx, y-offsety,
-                           x+offsetx, y-offsety);
-        SDL_RenderDrawLine(renderer, x-offsety, y-offsetx,
-                           x+offsety, y-offsetx);
+    if (surface == NULL)
+        CSDL_ErrorOut("Surface load error : %s\n");
 
-        if (d >= 2*offsetx) {
-            d -= 2*offsetx + 1;
-            offsetx += 1;
-        } else if (d < 2*(radius-offsety)) {
-            d += 2 * offsety - 1;
-            offsety -= 1;
-        } else {
-            d += 2*(offsety-offsetx-1);
-            offsety -= 1;
-            offsetx += 1;
-        }
-    }
+    SDL_Texture *texture = NULL;
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    if (texture == NULL)
+        CSDL_ErrorOut("Texture creation error : %s\n");
+
+    return texture;
+}
+
+void CSDL_RenderBoid(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *rect, boid *b) {
+    rect->x = b->pos.x;
+    rect->y = b->pos.y;
+
+    double angle = atan(b->vel.y/b->vel.x);
+    if (b->vel.x < 0 && b->vel.y > 0)
+        angle += M_PI;
+    else if (b->vel.x < 0 && b->vel.y < 0)
+        angle -= M_PI;
+
+    angle *= 180/M_PI;
+
+    SDL_RenderCopyEx(renderer, texture, NULL, rect, angle+90, NULL, SDL_FLIP_NONE);
+}
+
+void CSDL_Clear(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, 186, 166, 116, 0);
 }
 
 void CSDL_Quit(CSDL *csdl) {

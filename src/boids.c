@@ -1,6 +1,8 @@
-#include "boids.h"
 #include <time.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+#include "boids.h"
 
 boid_list create_boid_list(int count) {
     srand(time(NULL));
@@ -13,6 +15,8 @@ boid_list create_boid_list(int count) {
 
         if (!(rand()%100))
             boids.list[i]->strength = fmin(2, rand() % 5);
+        else
+            boids.list[i]->strength = 0;
     }
 
     return boids;
@@ -76,13 +80,16 @@ vec2D compute_alignment(boid_list *neighbours) {
 
 vec2D compute_leadership(boid *boid1, boid_list *neighbours) {
     if (neighbours->count == 0)
-        return (vec2D){0, 0};
+        return (vec2D) {0, 0};
 
     boid *leader = neighbours->list[0];
 
     for (int i = 1; i < neighbours->count; i++)
         if (neighbours->list[i]->strength > leader->strength)
             leader = neighbours->list[i];
+
+    if (leader->strength < 2)
+        return (vec2D) {0, 0};
 
     vec2D force = {leader->pos.x - boid1->pos.x, leader->pos.y - boid1->pos.y};
     mul_vec(&force, leader->strength);
