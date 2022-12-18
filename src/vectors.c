@@ -5,9 +5,16 @@ void add_vec(vec2D *vec1, vec2D *vec2) {
     vec1->y += vec2->y;
 }
 
-vec2D sub_vec(vec2D *vec1, vec2D *vec2) {
-    vec2D result = {vec1->x - vec2->x, vec1->y - vec2->y};
-    return result;
+void sub_vec(vec2D *vec1, vec2D *vec2) {
+    vec1->x -= vec2->x;
+    vec1->y -= vec2->y;
+}
+
+vec2D static_sub_vec(vec2D *vec1, vec2D *vec2) {
+    return (vec2D) {
+        vec1->x - vec2->x,
+        vec1->y - vec2->y
+    };
 }
 
 void mul_vec(vec2D *vec, double scalar) {

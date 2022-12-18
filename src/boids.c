@@ -37,38 +37,43 @@ boid_list get_neighbours(boid_list *boids, boid *boid1, double radius) {
     return neighbours;
 }
 
-vec2D compute_separation(boid *boid1, boid_list *neighbours) {
+vec2D compute_separation(boid *boid1, boid_list *neighbours, double weight) {
     vec2D force = {0, 0};
 
     for (int i = 0; i < neighbours->count; i++) {
-        vec2D diff = sub_vec(&boid1->pos, &neighbours->list[i]->pos);
+        vec2D diff = static_sub_vec(&boid1->pos, &neighbours->list[i]->pos);
         add_vec(&force, &diff);
     }
 
+    mul_vec(&force, weight);
     return force;
 }
 
-vec2D compute_cohesion(boid *boid1, boid_list *neighbours) {
+vec2D compute_cohesion(boid *boid1, boid_list *neighbours, double weight) {
     vec2D force = {0, 0};
 
     for (int i = 0; i < neighbours->count; i++)
         add_vec(&force, &neighbours->list[i]->pos);
     div_vec(&force, neighbours->count);
 
-    return sub_vec(&force, &boid1->pos);
+    sub_vec(&force, &boid1->pos);
+    mul_vec(&force, weight);
+
+    return force;
 }
 
-vec2D compute_alignment(boid_list *neighbours) {
+vec2D compute_alignment(boid_list *neighbours, double weight) {
     vec2D force = {0, 0};
 
     for (int i = 0; i < neighbours->count; i++)
         add_vec(&force, &neighbours->list[i]->vel);
     div_vec(&force, neighbours->count);
 
+    mul_vec(&force, weight);
     return force;
 }
 
-vec2D compute_leadership(boid *boid1, boid_list *neighbours) {
+vec2D compute_leadership(boid *boid1, boid_list *neighbours, double weight) {
     boid *leader = neighbours->list[0];
 
     for (int i = 1; i < neighbours->count; i++)
@@ -81,6 +86,7 @@ vec2D compute_leadership(boid *boid1, boid_list *neighbours) {
     vec2D force = {leader->pos.x - boid1->pos.x, leader->pos.y - boid1->pos.y};
     mul_vec(&force, leader->strength);
 
+    mul_vec(&force, weight);
     return force;
 }
 
@@ -104,19 +110,14 @@ void update_boid(boid *boid1, boid_list *boids) {
     boid_list around = get_neighbours(boids, boid1, 100);
 
     if (close.count > 0) {
-        vec2D separation = compute_separation(boid1, &close);
-        mul_vec(&separation, 0.2);
+        vec2D separation = compute_separation(boid1, &close, 0.2);
         add_vec(&boid1->acc, &separation);
     }
 
     if (around.count > 0) {
-        vec2D cohesion = compute_cohesion(boid1, &around);
-        vec2D alignment = compute_alignment(&around);
-        vec2D leadership = compute_leadership(boid1, &around);
-
-        mul_vec(&cohesion, 0.5);
-        mul_vec(&alignment, 5);
-        mul_vec(&leadership, 1);
+        vec2D cohesion = compute_cohesion(boid1, &around, 0.5);
+        vec2D alignment = compute_alignment(&around, 5);
+        vec2D leadership = compute_leadership(boid1, &around, 1);
 
         add_vec(&boid1->acc, &cohesion);
         add_vec(&boid1->acc, &alignment);
