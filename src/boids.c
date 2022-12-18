@@ -12,11 +12,10 @@ boid_list create_boid_list(int count) {
         boids.list[i] = malloc(sizeof(boid));
         boids.list[i]->pos.x = rand() % 1024;
         boids.list[i]->pos.y = rand() % 720;
+        boids.list[i]->strength = 0;
 
         if (!(rand()%100))
             boids.list[i]->strength = fmin(2, rand() % 5);
-        else
-            boids.list[i]->strength = 0;
     }
 
     return boids;
@@ -41,9 +40,6 @@ boid_list get_neighbours(boid_list *boids, boid *boid1, double radius) {
 vec2D compute_separation(boid *boid1, boid_list *neighbours) {
     vec2D force = {0, 0};
 
-    if (neighbours->count == 0)
-        return force;
-
     for (int i = 0; i < neighbours->count; i++) {
         vec2D diff = sub_vec(&boid1->pos, &neighbours->list[i]->pos);
         add_vec(&force, &diff);
@@ -55,9 +51,6 @@ vec2D compute_separation(boid *boid1, boid_list *neighbours) {
 vec2D compute_cohesion(boid *boid1, boid_list *neighbours) {
     vec2D force = {0, 0};
 
-    if (neighbours->count == 0)
-        return force;
-
     for (int i = 0; i < neighbours->count; i++)
         add_vec(&force, &neighbours->list[i]->pos);
     div_vec(&force, neighbours->count);
@@ -68,9 +61,6 @@ vec2D compute_cohesion(boid *boid1, boid_list *neighbours) {
 vec2D compute_alignment(boid_list *neighbours) {
     vec2D force = {0, 0};
 
-    if (neighbours->count == 0)
-        return force;
-
     for (int i = 0; i < neighbours->count; i++)
         add_vec(&force, &neighbours->list[i]->vel);
     div_vec(&force, neighbours->count);
@@ -79,9 +69,6 @@ vec2D compute_alignment(boid_list *neighbours) {
 }
 
 vec2D compute_leadership(boid *boid1, boid_list *neighbours) {
-    if (neighbours->count == 0)
-        return (vec2D) {0, 0};
-
     boid *leader = neighbours->list[0];
 
     for (int i = 1; i < neighbours->count; i++)
@@ -104,32 +91,37 @@ void limit_vel(boid *boid1, double max_vel) {
         mul_vec(&boid1->vel, max_vel/vel);
 }
 
-void limit_pos(boid *boid1, int limit) {
-    if (boid1->pos.x < limit && boid1->acc.x < 0 || boid1->pos.x > WIDTH-limit && boid1->acc.x > 0)
-        boid1->acc.x *= -1;
+void limit_pos(boid *b, int limit) {
+    if (b->pos.x < limit && b->acc.x < 0 || b->pos.x > WIDTH - limit && b->acc.x > 0)
+        b->acc.x = -b->acc.x;
 
-    if (boid1->pos.y < limit && boid1->acc.y < 0 || boid1->pos.y > HEIGHT-limit && boid1->acc.y > 0)
-        boid1->acc.y *= -1;
+    if (b->pos.y < limit && b->acc.y < 0 || b->pos.y > HEIGHT - limit && b->acc.y > 0)
+        b->acc.y = -b->acc.y;
 }
 
 void update_boid(boid *boid1, boid_list *boids) {
     boid_list close = get_neighbours(boids, boid1, 20);
     boid_list around = get_neighbours(boids, boid1, 100);
 
-    vec2D separation = compute_separation(boid1, &close);
-    vec2D cohesion = compute_cohesion(boid1, &around);
-    vec2D alignment = compute_alignment(&around);
-    vec2D leadership = compute_leadership(boid1, &around);
+    if (close.count > 0) {
+        vec2D separation = compute_separation(boid1, &close);
+        mul_vec(&separation, 0.2);
+        add_vec(&boid1->acc, &separation);
+    }
 
-    mul_vec(&separation, 0.2);
-    mul_vec(&cohesion, 0.5);
-    mul_vec(&alignment, 5);
-    mul_vec(&leadership, 1);
+    if (around.count > 0) {
+        vec2D cohesion = compute_cohesion(boid1, &around);
+        vec2D alignment = compute_alignment(&around);
+        vec2D leadership = compute_leadership(boid1, &around);
 
-    add_vec(&boid1->acc, &separation);
-    add_vec(&boid1->acc, &cohesion);
-    add_vec(&boid1->acc, &alignment);
-    add_vec(&boid1->acc, &leadership);
+        mul_vec(&cohesion, 0.5);
+        mul_vec(&alignment, 5);
+        mul_vec(&leadership, 1);
+
+        add_vec(&boid1->acc, &cohesion);
+        add_vec(&boid1->acc, &alignment);
+        add_vec(&boid1->acc, &leadership);
+    }
 
     add_vec(&boid1->vel, &boid1->acc);
 

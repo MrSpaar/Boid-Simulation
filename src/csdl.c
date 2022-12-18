@@ -1,5 +1,7 @@
 #include "csdl.h"
 
+#define TO_DEG 57.2957795131
+
 CSDL CSDL_Init(int width, int height) {
     CSDL csdl;
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -32,15 +34,15 @@ void CSDL_RenderBoid(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *rec
     rect->x = b->pos.x;
     rect->y = b->pos.y;
 
-    double angle = atan(b->vel.y/b->vel.x);
+    double angle = atan(b->vel.y/b->vel.x) + M_PI_2;
     if (b->vel.x < 0 && b->vel.y > 0)
         angle += M_PI;
     else if (b->vel.x < 0 && b->vel.y < 0)
         angle -= M_PI;
 
-    angle *= 180/M_PI;
+    angle *= TO_DEG;
 
-    SDL_RenderCopyEx(renderer, texture, NULL, rect, angle+90, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, texture, NULL, rect, angle, NULL, SDL_FLIP_NONE);
 }
 
 void CSDL_Clear(SDL_Renderer *renderer) {
