@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "boids.h"
+#include "../include/boids.h"
 
 boid_list create_boid_list(int count) {
     srand(time(NULL));

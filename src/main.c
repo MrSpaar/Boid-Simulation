@@ -1,5 +1,4 @@
-#include "csdl.h"
-#include "boids.h"
+#include "../include/csdl.h"
 
 int main() {
     CSDL csdl = CSDL_Init(WIDTH, HEIGHT);
@@ -8,7 +7,7 @@ int main() {
     SDL_Texture *texture = CSDL_CreateTexture(csdl.renderer, "../boid.bmp");
 
     SDL_Event event;
-    boid_list boids = create_boid_list(100);
+    boid_list boids = create_boid_list(300);
 
     while (1) {
         while(SDL_PollEvent(&event) != 0)

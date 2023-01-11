@@ -1,4 +1,4 @@
-#include "vectors.h"
+#include "../include/vectors.h"
 
 void add_vec(vec2D *vec1, vec2D *vec2) {
     vec1->x += vec2->x;

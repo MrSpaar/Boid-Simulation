@@ -1,4 +1,4 @@
-#include "csdl.h"
+#include "../include/csdl.h"
 
 #define TO_DEG 57.2957795131
 
@@ -52,8 +52,8 @@ void CSDL_Clear(SDL_Renderer *renderer) {
 }
 
 void CSDL_Quit(CSDL *csdl) {
-    SDL_DestroyWindow(csdl->window);
     SDL_DestroyRenderer(csdl->renderer);
+    SDL_DestroyWindow(csdl->window);
     SDL_Quit();
 
     exit(EXIT_SUCCESS);
