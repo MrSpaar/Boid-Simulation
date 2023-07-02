@@ -12,9 +12,9 @@ Boid's flocking behaviour is simulated using a simple rule-based system :
 <img align="center" src="images/ali.svg">
 
 Where :
-- **V** is the set of boids in the neighbourhood of a boid.
-- **N** is the number of boids in the neighbourhood of a boid.
-- **p**, **v** and **a** are the position, velocity and acceleration vectors of a boid.
+- **V** is the set of boids in the neighbourhood of a boid_t.
+- **N** is the number of boids in the neighbourhood of a boid_t.
+- **p**, **v** and **a** are the position, velocity and acceleration vectors of a boid_t.
 
 We can then apply coefficients to each rule to tune the flocking behaviour :<br>
 <img align="center" src="images/acc.svg">
@@ -28,13 +28,13 @@ Each frame, the boids are updated using the following formula :<br>
 Boid velocity is capped to a maximum value :<br>
 <img align="center" src="images/vel_cap.svg">
 
-If a boid is going towards a wall, it will be repelled by it :
+If a boid_t is going towards a wall, it will be repelled by it :
 ```
-limit_pos(boid, width, height, limit) {
-    if (boid.pos.x < limit && boid.acc.x < 0 || boid.pos.x > width-limit && boid.acc.x > 0)
+limit_pos(boid_t, width, height, limit) {
+    if (boid_t.pos.x < limit && boid_t.acc.x < 0 || boid_t.pos.x > width-limit && boid_t.acc.x > 0)
         boid1.acc.x *= -1;
 
-    if (boid.pos.y < limit && boid.acc.y < 0 || boid1.pos.y > height-limit && boid.acc.y > 0)
+    if (boid_t.pos.y < limit && boid_t.acc.y < 0 || boid1.pos.y > height-limit && boid_t.acc.y > 0)
         boid1.acc.y *= -1;
 }
 ```
@@ -45,7 +45,7 @@ Some boids are designated as leaders and other boids will follow them :<br>
 Where :
 - **L** is the strenght of the leader's influence.
 - **p<sub>L</sub>** is the position of the leader.
-- **p** is the position of another boid.
+- **p** is the position of another boid_t.
 
-The acceleration of a boid then follows this formula :<br>
+The acceleration of a boid_t then follows this formula :<br>
 <img align="center" src="images/acc2.svg">
