@@ -23,7 +23,7 @@ Each frame, the boids are updated using the following formula :<br>
 <img align="center" src="images/vel.svg">
 <img align="center" src="images/pos.svg">
 
-# Additional features
+## Additional features
 
 Boid velocity is capped to a maximum value :<br>
 <img align="center" src="images/vel_cap.svg">
