@@ -8,6 +8,7 @@
 #include "SDL2/SDL.h"
 
 #define TO_DEG 57.2957795131
+#define TICK_INTERVAL 16
 
 typedef struct {
     SDL_Window *window;
@@ -29,6 +30,13 @@ CSDL CSDL_Init(int width, int height) {
         CSDL_ErrorOut("Window and renderer creation error: %s\n");
 
     return csdl;
+}
+
+uint32_t CSDL_TicksLeft(uint32_t next_time) {
+    uint32_t now = SDL_GetTicks();
+    if (next_time < now)
+        return 0;
+    return next_time - now;
 }
 
 SDL_Texture *CSDL_CreateTexture(SDL_Renderer *renderer, char *path) {

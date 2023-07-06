@@ -7,6 +7,7 @@ int main() {
     SDL_Texture *texture = CSDL_CreateTexture(csdl.renderer, "../boid.bmp");
 
     SDL_Event event;
+    uint32_t next_time;
     boid_list_t boids = create_boid_list(300);
 
     while (1) {
@@ -16,6 +17,7 @@ int main() {
                 return 0;
             }
 
+        next_time = SDL_GetTicks() + TICK_INTERVAL;
         CSDL_Clear(csdl.renderer);
 
         for (int i=0; i<boids.count; i++) {
@@ -24,6 +26,7 @@ int main() {
         }
 
         SDL_RenderPresent(csdl.renderer);
-        SDL_Delay(15);
+        SDL_Delay(CSDL_TicksLeft(next_time));
+        next_time += TICK_INTERVAL;
     }
 }
