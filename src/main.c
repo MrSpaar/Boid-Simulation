@@ -33,8 +33,11 @@ int main() {
 
     srand(time(NULL));
     for (int i = 0; i < BOID_COUNT; i++) {
-        boids.list[i].pos.x = rand() % WIDTH;
-        boids.list[i].pos.y = rand() % HEIGHT;
+        boids.list[i].pos.x = rand()%WIDTH;
+        boids.list[i].pos.y = rand()%HEIGHT;
+
+        boids.list[i].acc.x = -1 + rand()%2;
+        boids.list[i].acc.y = -1 + rand()%2;
     }
 
     SDL_Event event;
