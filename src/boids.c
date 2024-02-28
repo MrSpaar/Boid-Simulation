@@ -1,44 +1,25 @@
-#include <time.h>
-#include <stdio.h>
 #include <stdlib.h>
-
 #include "../include/boids.h"
 
-
-void add_boid(boid_list_t *boids, boid_t *boid) {
-    boid_t *tmp = (boid_t*) realloc(boids->list, (boids->count + 1) * sizeof(boid_t));
-
-    if (tmp == NULL) {
-        printf("Error: realloc failed\n");
-        exit(1);
-    }
-
-    boids->list = tmp;
-    boids->list[boids->count] = *boid;
-    boids->count++;
-}
-
-boid_list_t create_boid_list(int count) {
-    srand(time(NULL));
-    boid_list_t boids = {calloc(count, sizeof(boid_t)), count};
-
-    for (int i = 0; i < count; i++) {
-        boids.list[i].pos.x = rand() % 1024;
-        boids.list[i].pos.y = rand() % 720;
-        boids.list[i].strength = 0;
-    }
-
-    return boids;
-}
-
-boid_list_t get_neighbours(boid_list_t *boids, boid_t *boid1, double radius) {
-    boid_list_t neighbours = {calloc(1, sizeof(boid_t*)), 0};
+boid_list_t *get_neighbours(boid_list_t *boids, boid_t *boid1, double radius) {
+    boid_list_t *neighbours = calloc(sizeof(boid_list_t), 1);
 
     for (int i = 0; i < boids->count; i++) {
         double distance = dist(&boid1->pos, &boids->list[i].pos);
 
-        if (distance < radius && distance != 0)
-            add_boid(&neighbours, &boids->list[i]);
+        if (distance < radius && distance != 0) {
+            neighbours->count++;
+            boid_t *temp = realloc(neighbours->list, neighbours->count*sizeof(boid_t));
+
+            if (temp == NULL) {
+                free(boids->list);
+                free(boids);
+                return NULL;
+            }
+
+            neighbours->list = temp;
+            neighbours->list[neighbours->count-1] = boids->list[i];
+        }
     }
 
     return neighbours;
@@ -95,18 +76,25 @@ void limit_pos(boid_t *b, int limit) {
         b->acc.y = -b->acc.y;
 }
 
-void update_boid(boid_t *boid, boid_list_t *boids) {
-    boid_list_t close = get_neighbours(boids, boid, 20);
-    boid_list_t around = get_neighbours(boids, boid, 100);
+int update_boid(boid_t *boid, boid_list_t *boids) {
+    boid_list_t *around = get_neighbours(boids, boid, 100);
+    if (around == NULL) {
+        return 1;
+    }
 
-    if (close.count > 0) {
-        vec2D separation = compute_separation(boid, &close, 0.2);
+    boid_list_t *close = get_neighbours(around, boid, 20);
+    if (close == NULL) {
+        return 1;
+    }
+
+    if (close->count > 0) {
+        vec2D separation = compute_separation(boid, close, 0.2);
         add_vec(&boid->acc, &separation);
     }
 
-    if (around.count > 0) {
-        vec2D cohesion = compute_cohesion(boid, &around, 0.5);
-        vec2D alignment = compute_alignment(&around, 5);
+    if (around->count > 0) {
+        vec2D cohesion = compute_cohesion(boid, around, 0.5);
+        vec2D alignment = compute_alignment(around, 5);
 
         add_vec(&boid->acc, &cohesion);
         add_vec(&boid->acc, &alignment);
@@ -117,6 +105,11 @@ void update_boid(boid_t *boid, boid_list_t *boids) {
     limit_pos(boid, 20);
     add_vec(&boid->pos, &boid->vel);
 
-    free(close.list);
-    free(around.list);
+    free(close->list);
+    free(around->list);
+
+    free(close);
+    free(around);
+
+    return 0;
 }

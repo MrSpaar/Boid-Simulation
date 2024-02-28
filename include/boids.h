@@ -5,7 +5,7 @@
 
 #define WIDTH 1024
 #define HEIGHT 720
-
+#define BOID_COUNT 300
 
 typedef struct {
     vec2D pos;
@@ -19,8 +19,6 @@ typedef struct {
     int count;
 } boid_list_t;
 
-boid_list_t create_boid_list(int count);
-void update_boid(boid_t *boid, boid_list_t *boids);
-void add_boid(boid_list_t *boids, boid_t *boid);
+int update_boid(boid_t *boid, boid_list_t *boids);
 
 #endif // __BOIDS_BOIDS_H

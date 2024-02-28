@@ -1,27 +1,58 @@
+#include <time.h>
 #include "../include/csdl.h"
 
-
 int main() {
-    CSDL csdl = CSDL_Init(WIDTH, HEIGHT);
+    int rc = 0;
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        SDL_OUT("Error while initializing SDL: %s\n");
+    }
 
-    SDL_Rect rect = {.w=12, .h=17};
-    SDL_Texture *texture = CSDL_CreateTexture(csdl.renderer, "../images/boid.bmp");
+    CSDL csdl = { NULL, NULL };
+    if (SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &csdl.window, &csdl.renderer) != 0) {
+        SDL_OUT("Error while creating window and renderer: %s\n");
+    }
+
+    SDL_Surface *surface = SDL_LoadBMP("../images/boid.bmp");
+    if (surface == NULL) {
+        SDL_OUT("Error while creating surface: %s\n");
+    }
+
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(csdl.renderer, surface);
+    if (texture == NULL) {
+        SDL_OUT("Error while creating texture: %s\n");
+    }
+
+    boid_list_t boids = { calloc(sizeof(boid_t), BOID_COUNT), BOID_COUNT };
+    if (boids.list == NULL) {
+        ERROR_OUT("Error while allocating memory for boids\n");
+    }
+
+    srand(time(NULL));
+    for (int i = 0; i < BOID_COUNT; i++) {
+        boids.list[i].pos.x = rand() % 1024;
+        boids.list[i].pos.y = rand() % 720;
+        boids.list[i].strength = 0;
+    }
 
     SDL_Event event;
     uint32_t next_time;
-    boid_list_t boids = create_boid_list(300);
+    SDL_Rect rect = { .w=12, .h=17 };
 
     while (1) {
-        while(SDL_PollEvent(&event) != 0)
+        while(SDL_PollEvent(&event) != 0) {
             if(event.type == SDL_QUIT) {
                 goto end;
             }
+        }
 
         next_time = SDL_GetTicks() + TICK_INTERVAL;
         CSDL_Clear(csdl.renderer);
 
-        for (int i=0; i<boids.count; i++) {
-            update_boid(&boids.list[i], &boids);
+        for (int i = 0; i < boids.count; i++) {
+            if (update_boid(&boids.list[i], &boids) < 0) {
+                ERROR_OUT("Error while allocating memory for neighbors\n");
+            }
+
             CSDL_RenderBoid(csdl.renderer, texture, &rect, &boids.list[i]);
         }
 
@@ -31,7 +62,15 @@ int main() {
     }
 
     end:
-        printf("Clearing simulation\n");
-        CSDL_Quit(&csdl, &boids);
-        return 0;
+        if (surface != NULL) SDL_FreeSurface(surface);
+        if (texture != NULL) SDL_DestroyTexture(texture);
+        if (boids.list != NULL) free(boids.list);
+
+        if (csdl.window != NULL) {
+            SDL_DestroyRenderer(csdl.renderer);
+            SDL_DestroyWindow(csdl.window);
+        }
+
+        SDL_Quit();
+        return rc;
 }

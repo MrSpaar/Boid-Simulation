@@ -1,7 +1,6 @@
 #ifndef __BOIDS_VECTORS_H
 #define __BOIDS_VECTORS_H
 
-
 typedef struct {
     double x;
     double y;
