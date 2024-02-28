@@ -11,7 +11,6 @@ typedef struct {
     vec2D pos;
     vec2D vel;
     vec2D acc;
-    double strength;
 } boid_t;
 
 typedef struct {
