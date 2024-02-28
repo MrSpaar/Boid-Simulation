@@ -61,21 +61,6 @@ vec2D compute_alignment(boid_list_t *neighbours, double weight) {
     return force;
 }
 
-void limit_vel(boid_t *boid1, double max_vel) {
-    double vel = norm(&boid1->vel);
-
-    if (vel > max_vel)
-        mul_vec(&boid1->vel, max_vel/vel);
-}
-
-void limit_pos(boid_t *b, int limit) {
-    if (b->pos.x < limit && b->acc.x < 0 || b->pos.x > WIDTH - limit && b->acc.x > 0)
-        b->acc.x = -b->acc.x;
-
-    if (b->pos.y < limit && b->acc.y < 0 || b->pos.y > HEIGHT - limit && b->acc.y > 0)
-        b->acc.y = -b->acc.y;
-}
-
 int update_boid(boid_t *boid, boid_list_t *boids) {
     boid_list_t *around = get_neighbours(boids, boid, 100);
     if (around == NULL) {
@@ -101,8 +86,19 @@ int update_boid(boid_t *boid, boid_list_t *boids) {
     }
 
     add_vec(&boid->vel, &boid->acc);
-    limit_vel(boid, 2);
-    limit_pos(boid, 20);
+    double vel = norm(&boid->vel);
+    if (vel > 2) {
+        mul_vec(&boid->vel, 2/vel);
+    }
+
+    if (boid->pos.x < 20 && boid->acc.x < 0 || boid->pos.x > WIDTH - 20 && boid->acc.x > 0) {
+        boid->acc.x = -boid->acc.x;
+    }
+
+    if (boid->pos.y < 20 && boid->acc.y < 0 || boid->pos.y > HEIGHT - 20 && boid->acc.y > 0) {
+        boid->acc.y = -boid->acc.y;
+    }
+
     add_vec(&boid->pos, &boid->vel);
 
     free(close->list);
@@ -112,4 +108,16 @@ int update_boid(boid_t *boid, boid_list_t *boids) {
     free(around);
 
     return 0;
+}
+
+void renderBoid(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *rect, boid_t *b) {
+    rect->x = (int) b->pos.x;
+    rect->y = (int) b->pos.y;
+    double angle = atan(b->vel.y/b->vel.x) + M_PI_2;
+
+    if (b->vel.x < 0 && b->vel.y > 0)      angle += M_PI;
+    else if (b->vel.x < 0 && b->vel.y < 0) angle -= M_PI;
+
+    angle *= TO_DEG;
+    SDL_RenderCopyEx(renderer, texture, NULL, rect, angle, NULL, SDL_FLIP_NONE);
 }

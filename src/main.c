@@ -1,5 +1,8 @@
 #include <time.h>
-#include "../include/csdl.h"
+#include "../include/boids.h"
+
+#define SDL_OUT(format) SDL_Log(format, SDL_GetError()); rc = 1; goto end
+#define ERROR_OUT(format) printf(format); rc = 1; goto end
 
 int main() {
     int rc = 0;
@@ -7,8 +10,9 @@ int main() {
         SDL_OUT("Error while initializing SDL: %s\n");
     }
 
-    CSDL csdl = { NULL, NULL };
-    if (SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &csdl.window, &csdl.renderer) != 0) {
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    if (SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) != 0) {
         SDL_OUT("Error while creating window and renderer: %s\n");
     }
 
@@ -17,7 +21,7 @@ int main() {
         SDL_OUT("Error while creating surface: %s\n");
     }
 
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(csdl.renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (texture == NULL) {
         SDL_OUT("Error while creating texture: %s\n");
     }
@@ -34,7 +38,7 @@ int main() {
     }
 
     SDL_Event event;
-    uint32_t next_time;
+    uint32_t next_time, now;
     SDL_Rect rect = { .w=12, .h=17 };
 
     while (1) {
@@ -45,19 +49,23 @@ int main() {
         }
 
         next_time = SDL_GetTicks() + TICK_INTERVAL;
-        CSDL_Clear(csdl.renderer);
+        SDL_RenderClear(renderer);
+
 
         for (int i = 0; i < boids.count; i++) {
             if (update_boid(&boids.list[i], &boids) < 0) {
                 ERROR_OUT("Error while allocating memory for neighbors\n");
             }
 
-            CSDL_RenderBoid(csdl.renderer, texture, &rect, &boids.list[i]);
+            renderBoid(renderer, texture, &rect, &boids.list[i]);
         }
 
-        SDL_RenderPresent(csdl.renderer);
-        SDL_Delay(CSDL_TicksLeft(next_time));
-        next_time += TICK_INTERVAL;
+        SDL_RenderPresent(renderer);
+        now = SDL_GetTicks();
+
+        if (now < next_time) {
+            SDL_Delay(next_time - now);
+        }
     }
 
     end:
@@ -65,9 +73,9 @@ int main() {
         if (texture != NULL) SDL_DestroyTexture(texture);
         if (boids.list != NULL) free(boids.list);
 
-        if (csdl.window != NULL) {
-            SDL_DestroyRenderer(csdl.renderer);
-            SDL_DestroyWindow(csdl.window);
+        if (window != NULL) {
+            SDL_DestroyRenderer(renderer);
+            SDL_DestroyWindow(window);
         }
 
         SDL_Quit();
