@@ -1,3 +1,7 @@
+.idea/
+.cache/
+.vscode/
+
+build/
 cmake-build-run/
 cmake-build-debug/
-.idea/

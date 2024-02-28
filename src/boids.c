@@ -1,7 +1,22 @@
 #include <time.h>
+#include <stdio.h>
 #include <stdlib.h>
+
 #include "../include/boids.h"
 
+
+void add_boid(boid_list_t *boids, boid_t *boid) {
+    boid_t *tmp = (boid_t*) realloc(boids->list, (boids->count + 1) * sizeof(boid_t));
+
+    if (tmp == NULL) {
+        printf("Error: realloc failed\n");
+        exit(1);
+    }
+
+    boids->list = tmp;
+    boids->list[boids->count] = *boid;
+    boids->count++;
+}
 
 boid_list_t create_boid_list(int count) {
     srand(time(NULL));
@@ -11,9 +26,6 @@ boid_list_t create_boid_list(int count) {
         boids.list[i].pos.x = rand() % 1024;
         boids.list[i].pos.y = rand() % 720;
         boids.list[i].strength = 0;
-
-        if (!(rand()%100))
-            boids.list[i].strength = fmin(2, rand() % 5);
     }
 
     return boids;
@@ -68,23 +80,6 @@ vec2D compute_alignment(boid_list_t *neighbours, double weight) {
     return force;
 }
 
-vec2D compute_leadership(boid_t *boid1, boid_list_t *neighbours, double weight) {
-    boid_t *leader = &neighbours->list[0];
-
-    for (int i = 1; i < neighbours->count; i++)
-        if (neighbours->list[i].strength > leader->strength)
-            leader = &neighbours->list[i];
-
-    if (leader->strength < 2)
-        return (vec2D) {0, 0};
-
-    vec2D force = static_sub_vec(&leader->pos, &boid1->pos);
-    mul_vec(&force, leader->strength);
-
-    mul_vec(&force, weight);
-    return force;
-}
-
 void limit_vel(boid_t *boid1, double max_vel) {
     double vel = norm(&boid1->vel);
 
@@ -112,11 +107,9 @@ void update_boid(boid_t *boid, boid_list_t *boids) {
     if (around.count > 0) {
         vec2D cohesion = compute_cohesion(boid, &around, 0.5);
         vec2D alignment = compute_alignment(&around, 5);
-        vec2D leadership = compute_leadership(boid, &around, 1);
 
         add_vec(&boid->acc, &cohesion);
         add_vec(&boid->acc, &alignment);
-        add_vec(&boid->acc, &leadership);
     }
 
     add_vec(&boid->vel, &boid->acc);

@@ -6,9 +6,8 @@ find_package(SDL2 REQUIRED)
 include_directories(SDL2 ${SDL2_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME}
-        src/main.c
-        src/boids.c include/boids.h
-        include/csdl.h
-        include/vectors.h)
+        src/main.c src/boids.c
+        src/csdl.c src/vectors.c
+)
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} -lm)

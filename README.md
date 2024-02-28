@@ -28,24 +28,11 @@ Each frame, the boids are updated using the following formula :<br>
 Boid velocity is capped to a maximum value :<br>
 <img align="center" src="images/vel_cap.svg">
 
-If a boid is going towards a wall, it will be repelled by it :
+If a boid is going towards a wall, it will be repelled by it (pseudo-code):
+```py
+if (Px < limit and Ax < 0) or (Px > width-limit and Ax > 0)
+    Ax *= -1;
+
+if (Py < limit and Ay < 0) or (Py > height-limit and Ay > 0)
+    Ay *= -1;
 ```
-limit_pos(boid, width, height, limit) {
-    if (boid.pos.x < limit && boid.acc.x < 0 || boid.pos.x > width-limit && boid.acc.x > 0)
-        boid1.acc.x *= -1;
-
-    if (boid.pos.y < limit && boid.acc.y < 0 || boid1.pos.y > height-limit && boid.acc.y > 0)
-        boid1.acc.y *= -1;
-}
-```
-
-Some boids are designated as leaders and other boids will follow them :<br>
-<img align="center" src="images/leader.svg">
-
-Where :
-- **L** is the strenght of the leader's influence.
-- **p<sub>L</sub>** is the position of the leader.
-- **p** is the position of another boid.
-
-The acceleration of a boid then follows this formula :<br>
-<img align="center" src="images/acc2.svg">
