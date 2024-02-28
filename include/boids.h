@@ -4,12 +4,20 @@
 #include <SDL2/SDL.h>
 #include "vectors.h"
 
-#define WIDTH 1024
-#define HEIGHT 720
+#define WIDTH      1024
+#define HEIGHT     720
 #define BOID_COUNT 300
 
 #define TICK_INTERVAL 16
 #define TO_DEG 57.2957795131
+
+#define SEPARATION_WEIGHT 0.2
+#define COHESION_WEIGHT   0.5
+#define ALIGNMENT_WEIGHT  5.0
+
+#define HIGHER_LIMIT 100
+#define LOWER_LIMIT  20
+#define BORDER_LIMIT 20
 
 typedef struct {
     vec2D pos;
