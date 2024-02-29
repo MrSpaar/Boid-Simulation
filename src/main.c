@@ -5,6 +5,10 @@
 #define ERROR_OUT(format) printf(format); rc = 1; goto end
 
 int main() {
+    if (getenv("WAYLAND_DISPLAY")) {
+        putenv("GDK_BACKEND=wayland");
+    }
+
     int rc = 0;
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_OUT("Error while initializing SDL: %s\n");
