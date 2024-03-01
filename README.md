@@ -1,6 +1,8 @@
 # Boid Simulation
 
-This is an extended implementation of Reynolds' Boids algorithm in C using SDL.<br>
+This is an extended implementation of Reynolds' Boids algorithm in C using SDL.
+![Demo Video](images/demo.gif)
+
 Boid's flocking behaviour is simulated using a simple rule-based system :
 - **Cohesion :** Boids try to stay close to local flockmates.<br>
 <img align="center" src="images/coh.svg">
