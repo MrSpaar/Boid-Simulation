@@ -46,7 +46,7 @@ int main() {
 
     SDL_Event event;
     uint32_t next_time, now;
-    SDL_Rect rect = { .w=12, .h=17 };
+    SDL_Rect rect = { .w=9, .h=12 };
 
     while (1) {
         while(SDL_PollEvent(&event) != 0) {

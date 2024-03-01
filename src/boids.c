@@ -22,7 +22,7 @@ int update_boid(boid_t *boid, boid_list_t *boids) {
     }
 
     if (separation.x != 0 || separation.y != 0) {
-        mul_vec(&separation, SEPARATION_WEIGHT);
+        mul_vec(&separation, SEPARATION_FACTOR);
         add_vec(&boid->acc, &separation);
     }
 
@@ -30,8 +30,8 @@ int update_boid(boid_t *boid, boid_list_t *boids) {
         div_vec(&cohesion, count);
         sub_vec(&cohesion, &boid->pos);
 
-        mul_vec(&cohesion, COHESION_WEIGHT);
-        mul_vec(&alignment, ALIGNMENT_WEIGHT/count);
+        mul_vec(&cohesion, COHESION_FACTOR);
+        mul_vec(&alignment, ALIGNMENT_FACTOR/count);
 
         add_vec(&boid->acc, &cohesion);
         add_vec(&boid->acc, &alignment);
@@ -44,11 +44,11 @@ int update_boid(boid_t *boid, boid_list_t *boids) {
     }
 
     if (boid->pos.x < BORDER_LIMIT && boid->acc.x < 0 || boid->pos.x > WIDTH-BORDER_LIMIT && boid->acc.x > 0) {
-        boid->acc.x = -boid->acc.x;
+        boid->acc.x = -DAMPING_FACTOR*boid->acc.x;
     }
 
     if (boid->pos.y < BORDER_LIMIT && boid->acc.y < 0 || boid->pos.y > HEIGHT-BORDER_LIMIT && boid->acc.y > 0) {
-        boid->acc.y = -boid->acc.y;
+        boid->acc.y = -DAMPING_FACTOR*boid->acc.y;
     }
 
     add_vec(&boid->pos, &boid->vel);
