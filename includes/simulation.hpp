@@ -1,17 +1,14 @@
-#ifndef __BOIDS_CSDL_H
-#define __BOIDS_CSDL_H
+#pragma once
 
 #include <SDL.h>
 #include "boids.hpp"
 
-#define TICK_INTERVAL 16
-#define TO_DEG 57.2957795131
 
-class Window {
+class Simulation {
 public:
-    explicit Window(const char *path);
+    explicit Simulation(const char *boidTexturePath);
     void update();
-    ~Window();
+    ~Simulation();
 private:
     void renderBoid(const Boid &boid);
 private:
@@ -21,8 +18,5 @@ private:
     SDL_Surface *surface;
     SDL_Texture* texture;
     SDL_Renderer *renderer;
-
-    SDL_Rect rect{ .w=9, .h=12 };
+    SDL_Rect rect{ .w=BOID_WIDTH, .h=BOID_HEIGHT };
 };
-
-#endif // __BOIDS_CSDL_H

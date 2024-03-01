@@ -1,12 +1,11 @@
 #include "../includes/boids.hpp"
 
-// Mettre à jour un boid en fonction de ses voisins
 void Boid::update(const std::vector<Boid> &boids) {
     int count;
     Vec2D separation, cohesion, alignment;
 
-    // Calcul des trois formules, au lieu de créer une liste de voisins et d'avoir
-    // trois calculs indépendant, on ne scanne la liste qu'une seule fois pour les trois
+    // For now, we scan the entire boid list once to detect close and surrounding neighbors
+    // No neighbor list is created to avoid unnecessary memory allocation
 
     for (const Boid &other: boids) {
         double distance = pos.dist(other.pos);
@@ -34,19 +33,19 @@ void Boid::update(const std::vector<Boid> &boids) {
 
     vel += acc;
 
-    // On limite la vélocité si elle est trop grande
+    // Cap the velocity if it exceeds the limit
     double norm = vel.norm();
-    if (norm > 2) {
-        vel *= 2/norm;
+    if (norm > VEL_LIMIT) {
+        vel *= VEL_LIMIT/norm;
     }
 
     pos += vel;
 
-    // Le boid doit faire demi-tour s'il a dépassé la bordure de la fenêtre
-    if (pos.x < POS_LIMIT && acc.x < 0 || pos.x > WIDTH-POS_LIMIT && acc.x > 0) {
+    // Bounce off the border if the boid gets to close
+    if (pos.x < POS_LIMIT && acc.x < 0 || pos.x > WINDOW_WIDTH-POS_LIMIT && acc.x > 0) {
         acc.x = -DAMPING_FACTOR*acc.x;
     }
-    if (pos.y < POS_LIMIT && acc.y < 0 || pos.y > HEIGHT-POS_LIMIT && acc.y > 0) {
+    if (pos.y < POS_LIMIT && acc.y < 0 || pos.y > WINDOW_HEIGHT-POS_LIMIT && acc.y > 0) {
         acc.y = -DAMPING_FACTOR*acc.y;
     }
 }

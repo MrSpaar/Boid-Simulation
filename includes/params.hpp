@@ -1,0 +1,21 @@
+#pragma once
+
+#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH  1024
+#define TICK_INTERVAL 16
+
+#define BOID_WIDTH  9
+#define BOID_HEIGHT 12
+#define BOID_COUNT  300
+
+#define SEPARATION_FACTOR 0.2
+#define COHESION_FACTOR   0.5
+#define ALIGNMENT_FACTOR  5
+#define DAMPING_FACTOR    0.3
+
+#define HIGHER_LIMIT 100
+#define LOWER_LIMIT  20
+#define POS_LIMIT    20
+#define VEL_LIMIT    2
+
+#define TO_DEG 57.2957795131
