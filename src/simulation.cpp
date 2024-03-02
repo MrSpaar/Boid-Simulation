@@ -1,6 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include <stdexcept>
+
 #include "../includes/simulation.hpp"
 
 
@@ -31,10 +32,15 @@ Simulation::Simulation(const char *boidTexturePath) {
     // To avoid generating the same numbers, the current time is used as a see
     srand(time(NULL));
 
-    // Fill the vector with random boids (see Boid::Boid)
+    // Fill the vector with random boids
     boids.reserve(BOID_COUNT);
     for (int i = 0; i < BOID_COUNT; i++) {
-        boids.emplace_back();
+        boids.push_back({
+            rand()%255, rand()%255, rand()%255,
+            { (double) (rand()%WINDOW_WIDTH), (double) (rand()%WINDOW_HEIGHT) },
+            { (double) (-1 + rand()%2), (double) (-1 + rand()%2) },
+            { (double) (-1 + rand()%2), (double) (-1 + rand()%2) }
+        });
     }
 }
 
@@ -51,7 +57,10 @@ void Simulation::renderBoid(const Boid &boid) {
 
     // Set the color and render the boid
     SDL_SetTextureColorMod(texture, boid.r, boid.g, boid.b);
-    SDL_RenderCopyEx(renderer, texture, NULL, &rect, angle*TO_DEG, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(
+        renderer, texture, NULL, &rect,
+        angle*57.2957795131, NULL, SDL_FLIP_NONE
+    );
 }
 
 void Simulation::update() {

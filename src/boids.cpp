@@ -1,4 +1,5 @@
 #include "../includes/boids.hpp"
+#include "../includes/params.hpp"
 
 void Boid::update(const std::vector<Boid> &boids) {
     int count;
