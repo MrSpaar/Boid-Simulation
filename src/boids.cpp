@@ -11,6 +11,7 @@ void Boid::update(const std::vector<Boid> &boids) {
     for (const Boid &other: boids) {
         double distance = pos.dist(other.pos);
         if (distance == 0) continue;
+        if (other.team != team) continue;
 
         if (distance < HIGHER_LIMIT) {
             count++;

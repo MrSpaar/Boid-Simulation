@@ -42,7 +42,7 @@ struct Vec2D {
 };
 
 struct Boid {
-    int r, g, b;
+    char team;
     Vec2D pos, vel, acc;
     void update(const std::vector<Boid> &boids);
 };

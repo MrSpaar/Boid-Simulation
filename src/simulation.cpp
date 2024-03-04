@@ -36,7 +36,7 @@ Simulation::Simulation(const char *boidTexturePath) {
     boids.reserve(BOID_COUNT);
     for (int i = 0; i < BOID_COUNT; i++) {
         boids.push_back({
-            rand()%255, rand()%255, rand()%255,
+            (char) (rand()%3),
             { (double) (rand()%WINDOW_WIDTH), (double) (rand()%WINDOW_HEIGHT) },
             { (double) (-1 + rand()%2), (double) (-1 + rand()%2) },
             { (double) (-1 + rand()%2), (double) (-1 + rand()%2) }
@@ -56,7 +56,9 @@ void Simulation::renderBoid(const Boid &boid) {
         angle -= M_PI;
 
     // Set the color and render the boid
-    SDL_SetTextureColorMod(texture, boid.r, boid.g, boid.b);
+    const SDL_Color& color = teams[boid.team];
+    SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
+
     SDL_RenderCopyEx(
         renderer, texture, NULL, &rect,
         angle*57.2957795131, NULL, SDL_FLIP_NONE

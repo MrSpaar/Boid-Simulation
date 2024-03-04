@@ -4,7 +4,6 @@
 #include "boids.hpp"
 #include "params.hpp"
 
-
 class Simulation {
 public:
     explicit Simulation(const char *boidTexturePath);
@@ -19,4 +18,10 @@ private:
 
     std::vector<Boid> boids;
     void renderBoid(const Boid &boid);
+
+    static constexpr SDL_Color teams[3] = {
+        {255, 0, 0},
+        {0, 255, 0},
+        {0, 0, 255}
+    };
 };
