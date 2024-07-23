@@ -22,7 +22,7 @@ We can then apply coefficients to each rule to tune the flocking behaviour :<br>
 $$\vec{a} = K_{sep}\cdot\vec{a_{sep}} + K_{coh}\cdot\vec{a_{coh}} + K_{ali}\cdot\vec{a_{ali}}$$
 
 Each frame, the boids are updated using the following formula :<br>
-$$\vec{v'} = \vec{v}+\vec{a}~\text{then}~\vec{p'} = \vec{p}+\vec{v'}$$
+$$\vec{v'} = \vec{v}+\vec{a}\text{ then }\vec{p'} = \vec{p}+\vec{v'}$$
 
 ## Additional features
 
